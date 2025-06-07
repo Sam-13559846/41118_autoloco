@@ -1,0 +1,55 @@
+Autoloco
+The goal of this project was to train a bipedal robot to learn to walk and navigate an obstacle course using Proximal Policy Optimization (PPO), a reinforcement learning algorithm implemented via Stable-Baselines3. The training environment was built in PyBullet, with a custom environment class following the OpenAI Gym interface.
+We developed a AutoLocoEnv environment that:
+Loads a robot from URDF.
+Defines a goal position using a small visual sphere.
+Calculates reward based on forward movement and distance to the goal.
+Includes joint and positional data in the observation space.
+We set up training with Stable-Baselines3 using:
+PPO("MlpPolicy", env, verbose=1) for learning,
+Training steps controlled via model.learn(total_timesteps=...),
+A Gym-to-Gymnasium compatibility patch using Shimmy.
+Despite correct environment wiring and successful integration with PPO, the robot never trained effectively. PyBullet’s native humanoid models (such as humanoid.urdf and humanoid_symmetric.urdf) had persistent issues:
+They consistently spawned lying on their sides or in invalid positions.
+In some cases, the model would launch into the air upon initialization and fall without ever regaining balance.
+This made reward feedback inconsistent and learning ineffective.
+After multiple fixes, including:
+Switching to a quadruped model (minitaur.urdf),
+Adjusting spawn coordinates and gravity,
+Visualizing and debugging orientation in the simulation,
+…the most functional result we achieved was a quadruped robot falling forward and twitching while on its back.
+A video in the linked Google Drive shows the best attempt. All source code, including:
+autoloco_env.py (environment logic),
+train.py (PPO training script),
+demo.py (for replaying trained models),
+…is provided in the submission.
+Although the robot never achieved stable locomotion, this project successfully demonstrates the setup process for PPO-based RL training in PyBullet using Stable-Baselines3, Gym, and Miniforge/Conda on a local Apple Silicon machine. With additional time or a custom-tuned robot model, functional training would likely be achievable.
+Packages to download:
+Conda environment:
+conda create -n autoloco python=3.10 -y
+conda activate autoloco
+Pybullet:
+conda install -c conda-forge pybullet
+Baselines:
+pip install stable-baselines3 gym numpy matplotlib torch shimmy
+
+
+All Packages
+
+
+pybullet
+Physics simulation engine for robotics and RL.
+stable-baselines3
+PPO training framework (RL algorithms).
+gym
+Environment interface (used to create custom RL environments).
+shimmy
+Compatibility layer between OpenAI Gym and Gymnasium (required by SB3).
+torch
+Deep learning backend for Stable-Baselines3 (used for PPO policy nets).
+numpy
+Math and array manipulation.
+matplotlib
+Plotting and visualization (optional, but helpful).
+
+
